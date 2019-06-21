@@ -12,14 +12,14 @@ const babylonModules = [
 ]
 
 const babylonGlobals = {
-    'babylonjs': 'BABYLONJS',
-    'babylonjs-serializers': 'BABYLONJS',
-    'babylonjs-loaders': 'BABYLONJS',
-    'babylonjs-gui': 'BABYLONJS.GUI',
-    '@babylonjs/serializers': 'BABYLONJS',
-    '@babylonjs/loaders': 'BABYLONJS',
-    '@babylonjs/gui': 'BABYLONJS.GUI',
-    '@babylonjs/core': 'BABYLONJS'
+    'babylonjs': 'BABYLON',
+    'babylonjs-serializers': 'BABYLON',
+    'babylonjs-loaders': 'BABYLON',
+    'babylonjs-gui': 'BABYLON.GUI',
+    '@babylonjs/serializers': 'BABYLON',
+    '@babylonjs/loaders': 'BABYLON',
+    '@babylonjs/gui': 'BABYLON.GUI',
+    '@babylonjs/core': 'BABYLON'
 }
 
 const template = (effect, includes, name, shader, store) =>

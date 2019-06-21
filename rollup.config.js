@@ -14,9 +14,9 @@ const ext = (format) => ({
 
 function lib (name) {
     if (name.endsWith('gui')) {
-        return 'BABYLONJS.GUI'
+        return 'BABYLON.GUI'
     } else {
-        return 'BABYLONJS'
+        return 'BABYLON'
     }
 }
 
