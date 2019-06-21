@@ -26,8 +26,8 @@ import { RenderTargetTexture } from "../Materials/Textures/renderTargetTexture";
 import { _TypeStore } from "../Misc/typeStore";
 import { MaterialFlags } from "./materialFlags";
 
-import "../Shaders/default.fragment";
-import "../Shaders/default.vertex";
+import "../Shaders/defaultShader.fragment";
+import "../Shaders/defaultShader.vertex";
 import { Constants } from "../Engines/constants";
 
 /** @hidden */
@@ -1112,7 +1112,7 @@ export class StandardMaterial extends PushMaterial {
             MaterialHelper.PrepareAttributesForInstances(attribs, defines);
             MaterialHelper.PrepareAttributesForMorphTargets(attribs, mesh, defines);
 
-            var shaderName = "default";
+            var shaderName = "defaultShader";
 
             var uniforms = ["world", "view", "viewProjection", "vEyePosition", "vLightsType", "vAmbientColor", "vDiffuseColor", "vSpecularColor", "vEmissiveColor", "visibility",
                 "vFogInfos", "vFogColor", "pointSize",

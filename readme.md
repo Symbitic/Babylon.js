@@ -131,4 +131,13 @@ To get a complete list of supported features, please visit our [website](https:/
 
 ## Build
 
-Babylon.js is automatically built using [Gulp](https://gulpjs.com/). Further instructions can be found in [the documentation](https://doc.babylonjs.com/how_to/how_to_start#the-build) or in the readme at [/Tools/Gulp](https://github.com/BabylonJS/Babylon.js/tree/master/Tools/Gulp).
+Babylon.js is automatically built using [Gulp](https://gulpjs.com/). Further instructions can be found in [the documentation](https://doc.babylonjs.com/how_to/how_to_start#the-build) or in the readme at [/Tools/Gulp](https://github.com/BabylonJS/Babylon.js/tree/master/Tools/Gulp). Internally, Gulp calls webpack to bundle the TypeScript source code into distributable packages.
+
+### Rollup
+
+Work is now underway to port Babylon.js to using [Rollup](https://rollupjs.org/). When completed, Gulp will no longer be needed and will be removed eventually.
+
+To build Babylon.js, run:
+```bash
+npm run build
+```

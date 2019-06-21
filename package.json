@@ -33,6 +33,9 @@
     "engines": {
         "node": "*"
     },
+    "scripts": {
+        "build": "rollup -c"
+    },
     "readme": "Babylon.js is a 3D engine based on webgl and javascript",
     "readmeFilename": "README.md",
     "dependencies": {},
@@ -86,6 +89,11 @@
         "react": "~16.6.3",
         "react-contextmenu": "~2.10.0",
         "react-dom": "~16.6.3",
+        "rollup": "^1.15.6",
+        "rollup-plugin-commonjs": "^10.0.0",
+        "rollup-plugin-json": "^4.0.0",
+        "rollup-plugin-node-resolve": "^5.0.3",
+        "rollup-plugin-typescript": "^1.0.1",
         "sass-loader": "^7.1.0",
         "shelljs": "^0.7.8",
         "sinon": "^6.1.4",
