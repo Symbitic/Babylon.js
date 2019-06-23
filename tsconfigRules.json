@@ -21,6 +21,11 @@
             "es2015.collection",
             "es2015.iterable"
         ],
-        "outDir": ".temp/manualBuild"
+        "outDir": ".temp/manualBuild",
+        "paths": {
+            "babylonjs-gltf2interface": [
+              "./dist/preview release/glTF2Interface/babylon.glTF2Interface.d.ts"
+            ]
+        }
     }
 }

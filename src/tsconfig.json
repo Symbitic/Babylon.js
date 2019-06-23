@@ -4,5 +4,9 @@
       "types" : [],
       "baseUrl": "./",
       "rootDir": "./"
-  }
+  },
+  "exclude": [
+      "index-es6.ts",
+      "index-max.ts"
+  ]
 }
