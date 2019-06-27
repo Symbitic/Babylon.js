@@ -10012,7 +10012,7 @@ declare module BABYLON {
         private _useTextureToStoreBoneMatrices;
         /**
          * Gets or sets a boolean indicating that bone matrices should be stored as a texture instead of using shader uniforms (default is true).
-         * Please note that this option is not available when needInitialSkinMatrix === true or if the hardware does not support it
+         * Please note that this option is not available if the hardware does not support it
          */
         useTextureToStoreBoneMatrices: boolean;
         private _animationPropertiesOverride;
@@ -10066,9 +10066,10 @@ declare module BABYLON {
         getTransformMatrices(mesh: AbstractMesh): Float32Array;
         /**
          * Gets the list of transform matrices to send to shaders inside a texture (one matrix per bone)
+         * @param mesh defines the mesh to use to get the root matrix (if needInitialSkinMatrix === true)
          * @returns a raw texture containing the data
          */
-        getTransformMatrixTexture(): Nullable<RawTexture>;
+        getTransformMatrixTexture(mesh: AbstractMesh): Nullable<RawTexture>;
         /**
          * Gets the current hosting scene
          * @returns a scene object
@@ -24805,6 +24806,8 @@ declare module BABYLON {
         };
         /** @hidden */
         _bonesTransformMatrices: Nullable<Float32Array>;
+        /** @hidden */
+        _transformMatrixTexture: Nullable<RawTexture>;
         /**
          * Gets or sets a skeleton to apply skining transformations
          * @see http://doc.babylonjs.com/how_to/how_to_use_bones_and_skeletons
@@ -46504,9 +46507,9 @@ declare module BABYLON {
         /**
          * Let user defines the brdf lookup texture used for IBL.
          * A default 8bit version is embedded but you could point at :
-         * * Default texture: https://assets.babylonjs.com/environments/correlatedMSBRDF.png
+         * * Default texture: https://assets.babylonjs.com/environments/correlatedMSBRDF_RGBD.png
          * * Default 16bit pixel depth texture: https://assets.babylonjs.com/environments/correlatedMSBRDF.dds
-         * * LEGACY Default None correlated https://assets.babylonjs.com/environments/uncorrelatedBRDF.png
+         * * LEGACY Default None correlated https://assets.babylonjs.com/environments/uncorrelatedBRDF_RGBD.png
          * * LEGACY Default None correlated 16bit pixel depth https://assets.babylonjs.com/environments/uncorrelatedBRDF.dds
          */
         environmentBRDFTexture: Nullable<BaseTexture>;
@@ -47526,7 +47529,7 @@ declare module BABYLON {
         /**
          * Gets the rendering group id the layer should render in.
          */
-        readonly renderingGroupId: number;
+        renderingGroupId: number;
         /**
          * An event triggered when the effect layer has been disposed.
          */
