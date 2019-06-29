@@ -21,7 +21,19 @@ function lib (name) {
     }
 }
 
-const output = (name, format) => ({
+const output1 = (name, format) => ({
+    extend: true,
+    file: `${path.join(dest, name.replace(/\-/g, '.'))}.${ext(format)}`,
+    format,
+    name: lib(name),
+    sourcemap: true
+});
+
+const output = (name, format) => format === 'esm' ? ({
+    dir: path.join(dest, name),
+    format,
+    sourcemap: true
+}) : ({
     extend: true,
     file: `${path.join(dest, name.replace(/\-/g, '.'))}.${ext(format)}`,
     format,
@@ -30,45 +42,52 @@ const output = (name, format) => ({
 });
 
 export default [
-    [ 'babylonjs', 'src/index-es6.ts' ],
-    [ 'babylonjs-min', 'src/index-es6.ts' ],
-    [ 'babylonjs-gui', 'gui/src/index.ts' ],
-    [ 'babylonjs-gui-min', 'gui/src/index.ts' ],
-    [ 'babylonjs-loaders', 'loaders/src/index.ts' ],
-    [ 'babylonjs-loaders-min', 'loaders/src/index.ts' ],
-    [ 'babylonjs-materials', 'materialsLibrary/src/index.ts' ],
-    [ 'babylonjs-materials-min', 'materialsLibrary/src/index.ts' ],
-    [ 'babylonjs-postProcess', 'postProcessLibrary/src/index.ts' ],
-    [ 'babylonjs-postProcess-min', 'postProcessLibrary/src/index.ts' ],
-    [ 'babylonjs-proceduralTextures', 'proceduralTexturesLibrary/src/index.ts' ],
-    [ 'babylonjs-proceduralTextures-min', 'proceduralTexturesLibrary/src/index.ts' ],
-    [ 'babylonjs-serializers', 'serializers/src/index.ts' ],
-    [ 'babylonjs-serializers-min', 'serializers/src/index.ts' ],
-    [ 'babylonjs-max', 'src/index-max.ts' ]
-].map(([ name, src ]) => ({
+    [ 'babylonjs', 'esm', 'src/index-es6.ts' ],
+    [ 'babylonjs', 'umd', 'src/index-es6.ts' ],
+    [ 'babylonjs-gui', 'esm', 'gui/src/index.ts' ],
+    [ 'babylonjs-min', 'umd', 'src/index-es6.ts' ],
+    [ 'babylonjs-gui', 'umd', 'gui/src/index.ts' ],
+    [ 'babylonjs-gui-min', 'umd', 'gui/src/index.ts' ],
+    [ 'babylonjs-loaders', 'esm', 'loaders/src/index.ts' ],
+    [ 'babylonjs-loaders', 'umd', 'loaders/src/index.ts' ],
+    [ 'babylonjs-loaders-min', 'umd', 'loaders/src/index.ts' ],
+    [ 'babylonjs-materials', 'esm', 'materialsLibrary/src/index.ts' ],
+    [ 'babylonjs-materials', 'umd', 'materialsLibrary/src/index.ts' ],
+    [ 'babylonjs-materials-min', 'umd', 'materialsLibrary/src/index.ts' ],
+    [ 'babylonjs-postProcess', 'esm', 'postProcessLibrary/src/index.ts' ],
+    [ 'babylonjs-postProcess', 'umd', 'postProcessLibrary/src/index.ts' ],
+    [ 'babylonjs-postProcess-min', 'umd', 'postProcessLibrary/src/index.ts' ],
+    [ 'babylonjs-proceduralTextures', 'esm', 'proceduralTexturesLibrary/src/index.ts' ],
+    [ 'babylonjs-proceduralTextures', 'umd', 'proceduralTexturesLibrary/src/index.ts' ],
+    [ 'babylonjs-proceduralTextures-min', 'umd', 'proceduralTexturesLibrary/src/index.ts' ],
+    [ 'babylonjs-serializers', 'esm', 'serializers/src/index.ts' ],
+    [ 'babylonjs-serializers', 'umd', 'serializers/src/index.ts' ],
+    [ 'babylonjs-serializers-min', 'umd', 'serializers/src/index.ts' ],
+    [ 'babylonjs-max', 'umd', 'src/index-max.ts' ]
+].map(([ name, format, src ]) => ({
     input: src,
-    output: name.endsWith('-min')
-        ? output(name, 'umd')
-        : [ output(name, 'esm'), output(name, 'umd') ],
+    output: output(name, format),
+    preserveModules: format === 'esm',
     plugins: [
         json(),
         babylonjs({
             max: name.indexOf('-max') > -1,
-            dts: !name.endsWith('-max') && !name.endsWith('-min')
+            dts: format === 'esm' && path.join(dest,
+                name.replace(/\-/g, '.').concat('.module.d.ts')
+            )
         }),
         resolve({
             extensions: [ '.ts', '.mjs', '.js', '.jsx', '.json' ]
         }),
 
         typescript({
-            tsconfig: path.dirname(src),
-            declaration: true,
-            declarationDir: './dist/rollup'
+            tsconfig: path.dirname(src)
         }),
 
         commonjs({
             extensions: [ '.ts', '.js' ]
         }),
+
         (name.endsWith('-min') || name.endsWith('-max')) && terser()
     ]
 }));

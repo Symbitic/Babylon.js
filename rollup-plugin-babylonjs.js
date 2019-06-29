@@ -1,6 +1,7 @@
 import path from 'path';
 import cp from 'child_process';
 import { promisify } from 'util';
+import { mv, rm } from 'shelljs';
 
 const exec = promisify(cp.exec);
 
@@ -13,7 +14,7 @@ const babylonModules = [
     '@babylonjs/loaders',
     '@babylonjs/gui',
     '@babylonjs/core'
-]
+];
 
 const babylonGlobals = {
     'babylonjs': 'BABYLON',
@@ -24,7 +25,7 @@ const babylonGlobals = {
     '@babylonjs/loaders': 'BABYLON',
     '@babylonjs/gui': 'BABYLON.GUI',
     '@babylonjs/core': 'BABYLON'
-}
+};
 
 const babylonDirs = {
     'babylonjs': 'src',
@@ -35,7 +36,7 @@ const babylonDirs = {
     '@babylonjs/loaders': 'loaders/src',
     '@babylonjs/gui': 'gui/src',
     '@babylonjs/core': 'src'
-}
+};
 
 const template = (effect, includes, name, shader, store) =>
 `// eslint-disable
@@ -46,13 +47,14 @@ const shader = ${JSON.stringify(shader)}
 
 Effect.${store}[name] = shader
 export const ${name} = { name, shader }
-`
+`;
 
 export default function ({ max = false, dts = false }) {
     const root = __dirname;
     let tsconfig = '';
     let dtsFile = '';
-    let running = false;
+    let dir = '';
+    let dirs = [];
 
     function resolveId (source, importer) {
         let ret = null;
@@ -141,13 +143,6 @@ export default function ({ max = false, dts = false }) {
 
         const name = path.basename(id).split('.')[0]
 
-        /*
-        if (includes) {
-            console.log(includes)
-            process.exit(0)
-        }
-        */
-
         return {
             code: template(effect, includes, name, shader, store),
             map: null
@@ -157,8 +152,10 @@ export default function ({ max = false, dts = false }) {
 
     function options (opts) {
         if (dts) {
-            const src = path.dirname('loaders/src/index.ts').replace(/\/src$/, '');
+            dir = path.dirname(opts.input)
+            const src = dir.replace(/\/src/, '');
             tsconfig = path.join(root, src, 'tsconfig.json');
+            dtsFile = path.join(root, dts);
         }
 
         const onwarn = ({ code, msg, ...params }) => {
@@ -177,22 +174,26 @@ export default function ({ max = false, dts = false }) {
         }
     }
 
-    function outputOptions ({ file }) {
+    async function generateBundle (opts) {
+        if (opts.dir) {
+            dirs = [
+                path.join(root, opts.dir, dir),
+                path.join(root, opts.dir),
+                path.join(root, opts.dir, dir).replace(/\/src$/, '')
+            ];
+        }
+
         if (dts) {
-            if (!dtsFile) {
-                dtsFile = path.join(root, file.replace(/\.[^.]+$/, '.module.d.ts'));
-            }
+            const tsc = path.resolve(root, 'node_modules/typescript/bin/tsc');
+            await exec(`node ${tsc} --module amd --outFile ${dtsFile} --emitDeclarationOnly true --project ${tsconfig}`);
         }
     }
 
-    async function generateBundle (opts) {
-        if (dts) {
-            if (!running) {
-                running = true;
-
-                const tsc = path.resolve(root, 'node_modules/typescript/bin/tsc');
-                await exec(`node ${tsc} --module amd --outFile ${dtsFile} --emitDeclarationOnly true --project ${tsconfig}`);
-            }
+    function writeBundle () {
+        if (dirs.length) {
+            const [ srcDir, destDir, rmDir ] = dirs
+            mv(`${srcDir}/*`, destDir);
+            rm('-rf', rmDir);
         }
     }
 
@@ -201,7 +202,7 @@ export default function ({ max = false, dts = false }) {
         resolveId,
         transform,
         options,
-        outputOptions,
         generateBundle,
+        writeBundle
     }
 }
