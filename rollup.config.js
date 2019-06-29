@@ -2,6 +2,7 @@ import babylonjs from './rollup-plugin-babylonjs.js';
 import commonjs from 'rollup-plugin-commonjs';
 import json from 'rollup-plugin-json';
 import path from 'path';
+import rename from 'rollup-plugin-rename';
 import resolve from 'rollup-plugin-node-resolve';
 import typescript from 'rollup-plugin-typescript';
 import { terser } from 'rollup-plugin-terser';
@@ -21,14 +22,6 @@ function lib (name) {
     }
 }
 
-const output1 = (name, format) => ({
-    extend: true,
-    file: `${path.join(dest, name.replace(/\-/g, '.'))}.${ext(format)}`,
-    format,
-    name: lib(name),
-    sourcemap: true
-});
-
 const output = (name, format) => format === 'esm' ? ({
     dir: path.join(dest, name),
     format,
@@ -44,8 +37,8 @@ const output = (name, format) => format === 'esm' ? ({
 export default [
     [ 'babylonjs', 'esm', 'src/index-es6.ts' ],
     [ 'babylonjs', 'umd', 'src/index-es6.ts' ],
-    [ 'babylonjs-gui', 'esm', 'gui/src/index.ts' ],
     [ 'babylonjs-min', 'umd', 'src/index-es6.ts' ],
+    [ 'babylonjs-gui', 'esm', 'gui/src/index.ts' ],
     [ 'babylonjs-gui', 'umd', 'gui/src/index.ts' ],
     [ 'babylonjs-gui-min', 'umd', 'gui/src/index.ts' ],
     [ 'babylonjs-loaders', 'esm', 'loaders/src/index.ts' ],
@@ -86,6 +79,16 @@ export default [
 
         commonjs({
             extensions: [ '.ts', '.js' ]
+        }),
+
+        format === 'esm' && rename({
+            include: [ '**/*.ts', '**/*.fx' ],
+            map: file => file
+                .replace(`${path.dirname(src)}/`, '')
+                .replace('src/', '')
+                // .replace(`${file.replace(/\-/g, '.')}/`, '')
+                .replace(/\.(ts|fx)$/, '.js')
+                .replace(/index-es6\.js/, 'index.js')
         }),
 
         (name.endsWith('-min') || name.endsWith('-max')) && terser()

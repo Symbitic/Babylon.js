@@ -1,7 +1,6 @@
 import path from 'path';
 import cp from 'child_process';
 import { promisify } from 'util';
-import { mv, rm } from 'shelljs';
 
 const exec = promisify(cp.exec);
 
@@ -53,8 +52,30 @@ export default function ({ max = false, dts = false }) {
     const root = __dirname;
     let tsconfig = '';
     let dtsFile = '';
-    let dir = '';
-    let dirs = [];
+
+    function options (opts) {
+        if (dts) {
+            const src = path.dirname(opts.input).replace(/\/src/, '');
+            tsconfig = path.join(root, src, 'tsconfig.json');
+            dtsFile = path.join(root, dts);
+        }
+
+        const onwarn = ({ code, msg, ...params }) => {
+            if (code === 'NAMESPACE_CONFLICT') {
+                return
+            }
+            opts.onwarn({ code, msg, ...params })
+        }
+
+        return {
+            ...opts,
+            external: babylonModules,
+            onwarn,
+            output: {
+                globals: babylonGlobals
+            }
+        }
+    }
 
     function resolveId (source, importer) {
         let ret = null;
@@ -150,50 +171,10 @@ export default function ({ max = false, dts = false }) {
 
     }
 
-    function options (opts) {
-        if (dts) {
-            dir = path.dirname(opts.input)
-            const src = dir.replace(/\/src/, '');
-            tsconfig = path.join(root, src, 'tsconfig.json');
-            dtsFile = path.join(root, dts);
-        }
-
-        const onwarn = ({ code, msg, ...params }) => {
-            if (code === 'NAMESPACE_CONFLICT') {
-                return
-            }
-            opts.onwarn({ code, msg, ...params })
-        }
-        return {
-            ...opts,
-            external: babylonModules,
-            onwarn,
-            output: {
-                globals: babylonGlobals
-            }
-        }
-    }
-
-    async function generateBundle (opts) {
-        if (opts.dir) {
-            dirs = [
-                path.join(root, opts.dir, dir),
-                path.join(root, opts.dir),
-                path.join(root, opts.dir, dir).replace(/\/src$/, '')
-            ];
-        }
-
+    async function generateBundle () {
         if (dts) {
             const tsc = path.resolve(root, 'node_modules/typescript/bin/tsc');
             await exec(`node ${tsc} --module amd --outFile ${dtsFile} --emitDeclarationOnly true --project ${tsconfig}`);
-        }
-    }
-
-    function writeBundle () {
-        if (dirs.length) {
-            const [ srcDir, destDir, rmDir ] = dirs
-            mv(`${srcDir}/*`, destDir);
-            rm('-rf', rmDir);
         }
     }
 
@@ -202,7 +183,6 @@ export default function ({ max = false, dts = false }) {
         resolveId,
         transform,
         options,
-        generateBundle,
-        writeBundle
+        generateBundle
     }
 }
