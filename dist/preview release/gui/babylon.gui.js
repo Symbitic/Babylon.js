@@ -97,10 +97,10 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ ({
 
 /***/ "../../node_modules/tslib/tslib.es6.js":
-/*!*****************************************************************!*\
-  !*** C:/Dev/Babylon/Babylon.js/node_modules/tslib/tslib.es6.js ***!
-  \*****************************************************************/
-/*! exports provided: __extends, __assign, __rest, __decorate, __param, __metadata, __awaiter, __generator, __exportStar, __values, __read, __spread, __await, __asyncGenerator, __asyncDelegator, __asyncValues, __makeTemplateObject, __importStar, __importDefault */
+/*!***********************************************************!*\
+  !*** C:/Repos/Babylon.js/node_modules/tslib/tslib.es6.js ***!
+  \***********************************************************/
+/*! exports provided: __extends, __assign, __rest, __decorate, __param, __metadata, __awaiter, __generator, __exportStar, __values, __read, __spread, __spreadArrays, __await, __asyncGenerator, __asyncDelegator, __asyncValues, __makeTemplateObject, __importStar, __importDefault */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -117,6 +117,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__values", function() { return __values; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__read", function() { return __read; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__spread", function() { return __spread; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__spreadArrays", function() { return __spreadArrays; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__await", function() { return __await; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__asyncGenerator", function() { return __asyncGenerator; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__asyncDelegator", function() { return __asyncDelegator; });
@@ -169,8 +170,10 @@ function __rest(s, e) {
     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
         t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0)
-            t[p[i]] = s[p[i]];
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
     return t;
 }
 
@@ -264,6 +267,14 @@ function __spread() {
     return ar;
 }
 
+function __spreadArrays() {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
+
 function __await(v) {
     return this instanceof __await ? (this.v = v, this) : new __await(v);
 }
@@ -355,8 +366,8 @@ module.exports = g;
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AdvancedDynamicTextureInstrumentation", function() { return AdvancedDynamicTextureInstrumentation; });
-/* harmony import */ var babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babylonjs/Misc/tools */ "babylonjs/Maths/math");
-/* harmony import */ var babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var babylonjs_Misc_perfCounter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babylonjs/Misc/perfCounter */ "babylonjs/Maths/math");
+/* harmony import */ var babylonjs_Misc_perfCounter__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babylonjs_Misc_perfCounter__WEBPACK_IMPORTED_MODULE_0__);
 
 /**
  * This class can be used to get instrumentation data from a AdvancedDynamicTexture object
@@ -374,9 +385,9 @@ var AdvancedDynamicTextureInstrumentation = /** @class */ (function () {
     texture) {
         this.texture = texture;
         this._captureRenderTime = false;
-        this._renderTime = new babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_0__["PerfCounter"]();
+        this._renderTime = new babylonjs_Misc_perfCounter__WEBPACK_IMPORTED_MODULE_0__["PerfCounter"]();
         this._captureLayoutTime = false;
-        this._layoutTime = new babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_0__["PerfCounter"]();
+        this._layoutTime = new babylonjs_Misc_perfCounter__WEBPACK_IMPORTED_MODULE_0__["PerfCounter"]();
         // Observers
         this._onBeginRenderObserver = null;
         this._onEndRenderObserver = null;
@@ -7065,6 +7076,8 @@ var InputText = /** @class */ (function (_super) {
         _this._isPointerDown = false;
         /** Gets or sets a string representing the message displayed on mobile when the control gets the focus */
         _this.promptMessage = "Please enter text:";
+        /** Force disable prompt on mobile device */
+        _this.disableMobilePrompt = false;
         /** Observable raised when the text changes */
         _this.onTextChangedObservable = new babylonjs_Misc_observable__WEBPACK_IMPORTED_MODULE_1__["Observable"]();
         /** Observable raised just before an entered character is to be added */
@@ -7396,7 +7409,7 @@ var InputText = /** @class */ (function (_super) {
         this._cursorOffset = 0;
         this._markAsDirty();
         this.onFocusObservable.notifyObservers(this);
-        if (navigator.userAgent.indexOf("Mobile") !== -1) {
+        if (navigator.userAgent.indexOf("Mobile") !== -1 && !this.disableMobilePrompt) {
             var value = prompt(this.promptMessage);
             if (value !== null) {
                 this.text = value;
@@ -13573,6 +13586,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 /**
  * Class used to create a container panel deployed on the surface of a cylinder
  */
@@ -13627,8 +13641,8 @@ var CylinderPanel = /** @class */ (function (_super) {
     CylinderPanel.prototype._cylindricalMapping = function (source) {
         var newPos = new babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0, source.y, this._radius);
         var yAngle = (source.x / this._radius);
-        babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["Matrix"].RotationYawPitchRollToRef(yAngle, 0, 0, babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["Tmp"].Matrix[0]);
-        return babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["Vector3"].TransformNormal(newPos, babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["Tmp"].Matrix[0]);
+        babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["Matrix"].RotationYawPitchRollToRef(yAngle, 0, 0, babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Matrix[0]);
+        return babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["Vector3"].TransformNormal(newPos, babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Matrix[0]);
     };
     return CylinderPanel;
 }(_volumeBasedPanel__WEBPACK_IMPORTED_MODULE_2__["VolumeBasedPanel"]));
@@ -14147,7 +14161,7 @@ var PlanePanel = /** @class */ (function (_super) {
             return;
         }
         control.position = nodePosition.clone();
-        var target = babylonjs_Maths_math__WEBPACK_IMPORTED_MODULE_1__["Tmp"].Vector3[0];
+        var target = babylonjs_Maths_math__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Vector3[0];
         target.copyFrom(nodePosition);
         switch (this.orientation) {
             case _container3D__WEBPACK_IMPORTED_MODULE_2__["Container3D"].FACEORIGIN_ORIENTATION:
@@ -14265,8 +14279,8 @@ var ScatterPanel = /** @class */ (function (_super) {
             });
             var radiusPaddingSquared = Math.pow(this.margin, 2.0);
             var cellSize = Math.max(this._cellWidth, this._cellHeight);
-            var difference2D = babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["Tmp"].Vector2[0];
-            var difference = babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["Tmp"].Vector3[0];
+            var difference2D = babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Vector2[0];
+            var difference = babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Vector3[0];
             for (var i = 0; i < meshes.length - 1; i++) {
                 for (var j = i + 1; j < meshes.length; j++) {
                     if (i != j) {
@@ -14371,8 +14385,8 @@ var SpherePanel = /** @class */ (function (_super) {
         var newPos = new babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["Vector3"](0, 0, this._radius);
         var xAngle = (source.y / this._radius);
         var yAngle = -(source.x / this._radius);
-        babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["Matrix"].RotationYawPitchRollToRef(yAngle, xAngle, 0, babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["Tmp"].Matrix[0]);
-        return babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["Vector3"].TransformNormal(newPos, babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["Tmp"].Matrix[0]);
+        babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["Matrix"].RotationYawPitchRollToRef(yAngle, xAngle, 0, babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Matrix[0]);
+        return babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["Vector3"].TransformNormal(newPos, babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Matrix[0]);
     };
     return SpherePanel;
 }(_volumeBasedPanel__WEBPACK_IMPORTED_MODULE_2__["VolumeBasedPanel"]));
@@ -14453,9 +14467,9 @@ var StackPanel3D = /** @class */ (function (_super) {
             }
             controlCount++;
             child.mesh.computeWorldMatrix(true);
-            child.mesh.getWorldMatrix().multiplyToRef(currentInverseWorld, babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["Tmp"].Matrix[0]);
+            child.mesh.getWorldMatrix().multiplyToRef(currentInverseWorld, babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Matrix[0]);
             var boundingBox = child.mesh.getBoundingInfo().boundingBox;
-            var extendSize = babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["Vector3"].TransformNormal(boundingBox.extendSize, babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["Tmp"].Matrix[0]);
+            var extendSize = babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["Vector3"].TransformNormal(boundingBox.extendSize, babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Matrix[0]);
             extendSizes.push(extendSize);
             if (this._isVertical) {
                 height += extendSize.y;
@@ -14632,8 +14646,8 @@ var VolumeBasedPanel = /** @class */ (function (_super) {
             child.mesh.computeWorldMatrix(true);
             //   child.mesh.getWorldMatrix().multiplyToRef(currentInverseWorld, Tmp.Matrix[0]);
             var boundingBox = child.mesh.getHierarchyBoundingVectors();
-            var extendSize = babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["Tmp"].Vector3[0];
-            var diff = babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["Tmp"].Vector3[1];
+            var extendSize = babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Vector3[0];
+            var diff = babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Vector3[1];
             boundingBox.max.subtractToRef(boundingBox.min, diff);
             diff.scaleInPlace(0.5);
             babylonjs_Misc_tools__WEBPACK_IMPORTED_MODULE_1__["Vector3"].TransformNormalToRef(diff, currentInverseWorld, extendSize);
@@ -15172,8 +15186,8 @@ var FluentMaterial = /** @class */ (function (_super) {
                 this._activeEffect.setFloat("borderWidth", this.borderWidth);
                 this._activeEffect.setFloat("edgeSmoothingValue", this.edgeSmoothingValue);
                 this._activeEffect.setFloat("borderMinValue", this.borderMinValue);
-                mesh.getBoundingInfo().boundingBox.extendSize.multiplyToRef(mesh.scaling, babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Tmp"].Vector3[0]);
-                this._activeEffect.setVector3("scaleFactor", babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["Tmp"].Vector3[0]);
+                mesh.getBoundingInfo().boundingBox.extendSize.multiplyToRef(mesh.scaling, babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Vector3[0]);
+                this._activeEffect.setVector3("scaleFactor", babylonjs_Misc_decorators__WEBPACK_IMPORTED_MODULE_1__["TmpVectors"].Vector3[0]);
             }
             if (defines.HOVERLIGHT) {
                 this._activeEffect.setDirectColor4("hoverColor", this.hoverColor);

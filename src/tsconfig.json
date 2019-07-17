@@ -1,12 +1,12 @@
 {
-  "extends": "../tsconfigRules",
-  "compilerOptions": {
-      "types" : [],
-      "baseUrl": "./",
-      "rootDir": "./"
-  },
-  "exclude": [
-      "index-es6.ts",
-      "index-max.ts"
-  ]
+    "extends": "../tsconfigRules",
+    "compilerOptions": {
+        "types": [],
+        "baseUrl": "./",
+        "rootDir": "./"
+    },
+    "exclude": [
+        "index-es6.ts",
+        "index-max.ts"
+    ]
 }
