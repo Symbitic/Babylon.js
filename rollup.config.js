@@ -1,5 +1,6 @@
 import babylonjs from './rollup-plugin-babylonjs.js';
 import commonjs from 'rollup-plugin-commonjs';
+import dts from './rollup-plugin-dts.js';
 import json from 'rollup-plugin-json';
 import path from 'path';
 import rename from 'rollup-plugin-rename';
@@ -64,8 +65,11 @@ export default [
     plugins: [
         json(),
         babylonjs({
-            max: name.indexOf('-max') > -1,
-            dts: format === 'esm' && path.join(dest,
+            max: name.indexOf('-max') > -1
+        }),
+        (format === 'esm') && dts({
+            name,
+            output: path.join(dest,
                 name.replace(/\-/g, '.').concat('.module.d.ts')
             )
         }),

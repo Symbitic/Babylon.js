@@ -1,8 +1,4 @@
 import path from 'path';
-import cp from 'child_process';
-import { promisify } from 'util';
-
-const exec = promisify(cp.exec);
 
 const babylonModules = [
     'babylonjs',
@@ -20,9 +16,15 @@ const babylonGlobals = {
     'babylonjs-serializers': 'BABYLON',
     'babylonjs-loaders': 'BABYLON',
     'babylonjs-gui': 'BABYLON.GUI',
+    'babylonjs-materials': 'BABYLON',
+    'babylonjs-postProcess': 'BABYLON',
+    'babylonjs-proceduralTextures': 'BABYLON',
     '@babylonjs/serializers': 'BABYLON',
     '@babylonjs/loaders': 'BABYLON',
     '@babylonjs/gui': 'BABYLON.GUI',
+    '@babylonjs/materials': 'BABYLON',
+    '@babylonjs/post-process': 'BABYLON',
+    '@babylonjs/procedural-textures': 'BABYLON',
     '@babylonjs/core': 'BABYLON'
 };
 
@@ -48,18 +50,10 @@ Effect.${store}[name] = shader
 export const ${name} = { name, shader }
 `;
 
-export default function ({ max = false, dts = false }) {
+export default function ({ max = false }) {
     const root = __dirname;
-    let tsconfig = '';
-    let dtsFile = '';
 
     function options (opts) {
-        if (dts) {
-            const src = path.dirname(opts.input).replace(/\/src/, '');
-            tsconfig = path.join(root, src, 'tsconfig.json');
-            dtsFile = path.join(root, dts);
-        }
-
         const onwarn = ({ code, msg, ...params }) => {
             if (code === 'NAMESPACE_CONFLICT') {
                 return
@@ -171,18 +165,10 @@ export default function ({ max = false, dts = false }) {
 
     }
 
-    async function generateBundle () {
-        if (dts) {
-            const tsc = path.resolve(root, 'node_modules/typescript/bin/tsc');
-            await exec(`node ${tsc} --module amd --outFile ${dtsFile} --emitDeclarationOnly true --project ${tsconfig}`);
-        }
-    }
-
     return {
         name: 'babylonjs',
         resolveId,
         transform,
-        options,
-        generateBundle
+        options
     }
 }
